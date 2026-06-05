@@ -1,0 +1,326 @@
+/* =========================================
+   GLOBAL STYLING
+========================================= */
+
+body {
+    background: linear-gradient(
+        90deg,
+        #020617 0%,
+        #071132 20%,
+        #020617 50%,
+        #071132 80%,
+        #020617 100%
+    );
+
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+
+    color: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* =========================================
+   ANIMATED BACKGROUND
+========================================= */
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+    background: rgba(2, 6, 23, 0.92) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.navbar-brand,
+.nav-link {
+    color: #f8fafc !important;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: #3b82f6 !important;
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+
+.hero-section {
+    padding: 120px 20px 80px;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white;
+    text-shadow: 0 0 20px rgba(59,130,246,0.4);
+}
+
+.hero-subtitle {
+    margin-top: 20px;
+    color: #cbd5e1;
+    font-size: 1.4rem;
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.card {
+    background: rgba(15, 23, 42, 0.78);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+}
+
+.card-header {
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.btn {
+    border-radius: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: #2563eb;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: scale(1.03);
+}
+
+.btn-success:hover,
+.btn-warning:hover,
+.btn-danger:hover {
+    transform: scale(1.03);
+}
+
+/* =========================================
+   SAFE INPUT STYLING
+========================================= */
+
+input.form-control,
+select.form-select,
+textarea.form-control {
+
+    background: rgba(15, 23, 42, 0.9) !important;
+
+    border: 1px solid rgba(255,255,255,0.08) !important;
+
+    color: white !important;
+
+    border-radius: 12px;
+
+    padding: 12px;
+}
+
+input.form-control:focus,
+select.form-select:focus,
+textarea.form-control:focus {
+
+    background: rgba(15, 23, 42, 1) !important;
+
+    color: white !important;
+
+    border-color: #3b82f6 !important;
+
+    box-shadow: 0 0 0 0.2rem rgba(59,130,246,0.25) !important;
+}
+
+input.form-control::placeholder,
+textarea.form-control::placeholder {
+    color: #94a3b8;
+}
+
+/* =========================================
+   TABLES
+========================================= */
+
+.table {
+    color: #f8fafc !important;
+}
+
+.table thead {
+    background: rgba(255,255,255,0.05);
+}
+
+.table td,
+.table th {
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+/* =========================================
+   CAMERA AREA
+========================================= */
+
+.camera-container {
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(15,23,42,0.8);
+    padding: 20px;
+}
+
+/* =========================================
+   STAT CARDS
+========================================= */
+
+.stat-card {
+    padding: 30px;
+    text-align: center;
+    border-radius: 24px;
+    background: rgba(15,23,42,0.8);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+}
+
+/* =========================================
+   ALERTS
+========================================= */
+
+.alert {
+    border-radius: 18px;
+    border: none;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    margin-top: 60px;
+    padding: 25px;
+    text-align: center;
+    color: #cbd5e1;
+    background: rgba(2,6,23,0.7);
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e40af;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+/* FIX SECURITY DEMO BOXES */
+
+.security-demo .card,
+.demo-card,
+.info-card {
+
+    background: rgba(15, 23, 42, 0.85) !important;
+
+    color: white !important;
+
+    border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.security-demo .card-body,
+.demo-card .card-body,
+.info-card .card-body {
+
+    color: white !important;
+}
+
+.security-demo h5,
+.security-demo p,
+.security-demo span,
+.demo-card h5,
+.demo-card p,
+.info-card h5,
+.info-card p {
+
+    color: white !important;
+}
+/* FIX TABLE TEXT VISIBILITY */
+
+.table,
+.table td,
+.table th,
+.table tr {
+
+    color: #f8fafc !important;
+}
+
+.table tbody tr {
+
+    background: transparent !important;
+}
+
+.table-hover tbody tr:hover {
+
+    background: rgba(255,255,255,0.04) !important;
+}
+
+/* EMPLOYEE PAGE TEXT */
+
+.employee-table td,
+.employee-table th {
+
+    color: white !important;
+}
+
+/* ATTENDANCE PAGE TEXT */
+
+.attendance-table td,
+.attendance-table th {
+
+    color: white !important;
+}

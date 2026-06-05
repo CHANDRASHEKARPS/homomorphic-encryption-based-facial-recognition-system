@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}Encrypted Data - Homomorphic Attendance System{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+
+```
+    <h2 class="mb-4 text-white">
+        <i class="fas fa-lock"></i>
+        Encrypted Face Templates
+    </h2>
+
+    <!-- SECURITY DEMO -->
+
+    <div class="card mb-4 shadow-lg border-0">
+
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-shield-alt"></i>
+                Security Demonstration
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <p class="lead text-light">
+                This page demonstrates how face data is stored in encrypted form
+                using homomorphic encryption, ensuring complete privacy and security.
+            </p>
+
+            <div class="row mt-4">
+
+                <!-- LEFT CARD -->
+
+                <div class="col-md-6 mb-3">
+                    <div class="info-card h-100">
+
+                        <div class="text-center">
+                            <i class="fas fa-lock fa-3x text-success mb-3"></i>
+
+                            <h4 class="text-white">
+                                Encrypted Storage
+                            </h4>
+                        </div>
+
+                        <p class="text-light mt-3">
+                            Employee facial features are never stored as raw images.
+                            The system converts them into encrypted mathematical vectors
+                            using homomorphic encryption.
+                        </p>
+
+                        <ul class="text-light">
+                            <li>CKKS Homomorphic Encryption</li>
+                            <li>Encrypted feature vectors</li>
+                            <li>No raw biometric storage</li>
+                            <li>Privacy-preserving authentication</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <!-- RIGHT CARD -->
+
+                <div class="col-md-6 mb-3">
+                    <div class="info-card h-100">
+
+                        <div class="text-center">
+                            <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+
+                            <h4 class="text-white">
+                                Privacy Protection
+                            </h4>
+                        </div>
+
+                        <p class="text-light mt-3">
+                            Face matching happens securely on encrypted data.
+                            Actual biometric information is never exposed during
+                            attendance verification.
+                        </p>
+
+                        <ul class="text-light">
+                            <li>128-bit security level</li>
+                            <li>Encrypted comparison operations</li>
+                            <li>Secure database storage</li>
+                            <li>Zero biometric leakage</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ENCRYPTED TABLE -->
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                <i class="fas fa-database"></i>
+                Encrypted Face Templates
+
+                <span class="badge bg-light text-dark ms-2" id="templatesCount">
+                    0 templates
+                </span>
+            </h5>
+
+            <button id="refreshTemplates" class="btn btn-light btn-sm">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+
+        </div>
+
+        <div class="card-body">
+
+            <div id="templatesLoading" class="text-center py-5">
+                <div class="spinner-border text-primary"></div>
+
+                <p class="mt-3 text-light">
+                    Loading encrypted templates...
+                </p>
+            </div>
+
+            <div id="templatesContent" style="display:none;">
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+
+                    Below are the encrypted face templates stored in the database.
+                    The actual face data is never decrypted - even during matching operations.
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-dark table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Encrypted Data Preview</th>
+                                <th>Data Size</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="templatesTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <div id="templatesEmpty" class="text-center py-5" style="display:none;">
+
+                <i class="fas fa-database fa-4x text-secondary mb-3"></i>
+
+                <h4 class="text-light">
+                    No Encrypted Templates Found
+                </h4>
+
+                <p class="text-secondary">
+                    Register employees to generate encrypted face templates.
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+
+    <div class="card mt-4 shadow-lg border-0">
+
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+                <i class="fas fa-lightbulb"></i>
+                How It Works
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row text-center">
+
+                <div class="col-md-3 mb-3">
+                    <div class="step-card">
+
+                        <i class="fas fa-camera fa-3x text-primary mb-3"></i>
+
+                        <h5 class="text-white">
+                            1. Face Capture
+                        </h5>
+
+                        <p class="text-light mb-0">
+                            Employee face is captured during registration
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="step-card">
+
+                        <i class="fas fa-fingerprint fa-3x text-info mb-3"></i>
+
+                        <h5 class="text-white">
+                            2. Feature Extraction
+                        </h5>
+
+                        <p class="text-light mb-0">
+                            64 facial features are extracted
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="step-card">
+
+                        <i class="fas fa-lock fa-3x text-success mb-3"></i>
+
+                        <h5 class="text-white">
+                            3. Homomorphic Encryption
+                        </h5>
+
+                        <p class="text-light mb-0">
+                            Features are encrypted using CKKS
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="step-card">
+
+                        <i class="fas fa-database fa-3x text-secondary mb-3"></i>
+
+                        <h5 class="text-white">
+                            4. Secure Storage
+                        </h5>
+
+                        <p class="text-light mb-0">
+                            Encrypted template stored in database
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const refreshBtn = document.getElementById('refreshTemplates');
+    const loadingDiv = document.getElementById('templatesLoading');
+    const contentDiv = document.getElementById('templatesContent');
+    const emptyDiv = document.getElementById('templatesEmpty');
+    const tableBody = document.getElementById('templatesTableBody');
+    const templatesCount = document.getElementById('templatesCount');
+
+    function loadTemplates() {
+
+        loadingDiv.style.display = 'block';
+        contentDiv.style.display = 'none';
+        emptyDiv.style.display = 'none';
+
+        fetch('/api/encrypted-templates')
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                loadingDiv.style.display = 'none';
+
+                if (data.status === 'success' && data.templates.length > 0) {
+
+                    templatesCount.textContent =
+                        `${data.templates.length} templates`;
+
+                    tableBody.innerHTML = '';
+
+                    data.templates.forEach(template => {
+
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+
+                            <td class="text-white fw-bold">
+                                ${template.employee_id}
+                            </td>
+
+                            <td class="text-white">
+                                ${template.name}
+                            </td>
+
+                            <td class="text-white">
+                                ${template.department}
+                            </td>
+
+                            <td>
+
+                                <div class="encrypted-data">
+
+                                    <code class="encrypted-code">
+${template.encrypted_data_preview}
+                                    </code>
+
+                                    <small class="text-secondary">
+                                        First 100 characters
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-info text-dark">
+                                    ${template.data_length} bytes
+                                </span>
+
+                            </td>
+
+                            <td class="text-light">
+                                ${template.created_date}
+                            </td>
+
+                        `;
+
+                        tableBody.appendChild(row);
+
+                    });
+
+                    contentDiv.style.display = 'block';
+
+                } else {
+
+                    emptyDiv.style.display = 'block';
+                }
+
+            })
+
+            .catch(error => {
+
+                console.error(error);
+
+                loadingDiv.style.display = 'none';
+                emptyDiv.style.display = 'block';
+
+            });
+    }
+
+    refreshBtn.addEventListener('click', loadTemplates);
+
+    loadTemplates();
+
+});
+
+</script>
+
+<style>
+
+.info-card{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.info-card:hover{
+    transform: translateY(-5px);
+    transition: 0.3s ease;
+}
+
+.step-card{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 25px;
+    height: 100%;
+    transition: 0.3s ease;
+}
+
+.step-card:hover{
+    transform: translateY(-5px);
+    border-color: #0d6efd;
+}
+
+.encrypted-data{
+    max-width: 320px;
+}
+
+.encrypted-code{
+    display:block;
+    background:#f8f9fa;
+    color:#ff006e;
+    padding:12px;
+    border-radius:10px;
+    font-size:0.72rem;
+    word-break: break-all;
+    margin-bottom:8px;
+}
+
+.table td,
+.table th{
+    vertical-align: middle;
+}
+
+</style>
+
+{% endblock %}

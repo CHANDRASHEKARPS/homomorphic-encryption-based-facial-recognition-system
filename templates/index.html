@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Homomorphic Attendance System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto text-center">
+        <div class="hero-section mb-5">
+            <h1 class="display-4 mb-4">
+                <i class="fas fa-shield-alt text-primary"></i><br>
+                Homomorphic Attendance System
+            </h1>
+            <p class="lead text-muted mb-4">
+                Secure, privacy-preserving face recognition attendance system using homomorphic encryption
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Employee Registration</h5>
+                        <p class="card-text">Register new employees with encrypted face templates</p>
+                        <a href="{{ url_for('register_page') }}" class="btn btn-primary">Register</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sign-in-alt fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Check-in</h5>
+                        <p class="card-text">Secure attendance check-in using homomorphic matching</p>
+                        <a href="{{ url_for('checkin_page') }}" class="btn btn-success">Check-in</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sign-out-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Check-out</h5>
+                        <p class="card-text">Secure attendance check-out using encrypted matching</p>
+                        <a href="{{ url_for('checkout_page') }}" class="btn btn-warning">Check-out</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-info">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">View Reports</h5>
+                        <p class="card-text">Access attendance records and system statistics</p>
+                        <a href="{{ url_for('attendance_page') }}" class="btn btn-info">View Reports</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-secondary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-secondary mb-3"></i>
+                        <h5 class="card-title">Manage Employees</h5>
+                        <p class="card-text">View and manage registered employees</p>
+                        <a href="{{ url_for('employees_page') }}" class="btn btn-secondary">Manage</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-dark">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x text-dark mb-3"></i>
+                        <h5 class="card-title">View Encrypted Data</h5>
+                        <p class="card-text">See how face data is stored securely with homomorphic encryption</p>
+                        <a href="{{ url_for('encrypted_data_page') }}" class="btn btn-dark">View Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <i class="fas fa-info-circle"></i> System Information
+                    </div>
+                    <div class="card-body">
+                        <div id="systemInfo">
+                            <p class="text-muted">Loading system status...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load system info
+    fetch('/api/health')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'healthy') {
+                document.getElementById('systemInfo').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong> <span class="text-success">Operational</span></p>
+                            <p><strong>Employees Registered:</strong> ${data.employees_count}</p>
+                            <p><strong>Today's Check-ins:</strong> ${data.today_checkins}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Current Time (IST):</strong> ${data.time_display}</p>
+                            <p><strong>Security Level:</strong> <span class="text-success">High</span></p>
+                            <p><strong>Encryption:</strong> Homomorphic (CKKS)</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt"></i> All face data is encrypted using homomorphic encryption. 
+                            No raw biometric data is stored or transmitted.
+                        </small>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            document.getElementById('systemInfo').innerHTML = `
+                <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Unable to connect to server</p>
+            `;
+        });
+});
+</script>
+{% endblock %}

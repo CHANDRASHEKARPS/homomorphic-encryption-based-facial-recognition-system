@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics - Homomorphic Attendance System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2 class="mb-4"><i class="fas fa-chart-bar"></i> System Statistics</h2>
+        
+        <div class="row g-4">
+            <!-- Total Employees Card -->
+            <div class="col-md-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3 id="totalEmployees" class="card-title">0</h3>
+                        <p class="card-text">Total Employees</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Check-ins Card -->
+            <div class="col-md-4">
+                <div class="card text-center border-success">
+                    <div class="card-body">
+                        <i class="fas fa-sign-in-alt fa-3x text-success mb-3"></i>
+                        <h3 id="todayCheckins" class="card-title">0</h3>
+                        <p class="card-text">Today's Check-ins</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Check-ins Card -->
+            <div class="col-md-4">
+                <div class="card text-center border-info">
+                    <div class="card-body">
+                        <i class="fas fa-history fa-3x text-info mb-3"></i>
+                        <h3 id="totalCheckins" class="card-title">0</h3>
+                        <p class="card-text">Total Check-ins</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Security Features</h6>
+                        <ul>
+                            <li>Homomorphic Encryption</li>
+                            <li>Privacy-preserving face recognition</li>
+                            <li>Encrypted face templates</li>
+                            <li>Secure data transmission</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Technical Details</h6>
+                        <ul>
+                            <li>Python Flask Backend</li>
+                            <li>SQLite Database</li>
+                            <li>OpenCV Face Detection</li>
+                            <li>TenSEAL Homomorphic Encryption</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-sync-alt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('register_page') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Register Employee
+                    </a>
+                    <a href="{{ url_for('checkin_page') }}" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt"></i> Check-in
+                    </a>
+                    <a href="{{ url_for('attendance_page') }}" class="btn btn-info">
+                        <i class="fas fa-list"></i> View Attendance
+                    </a>
+                    <button id="refreshStats" class="btn btn-outline-secondary">
+                        <i class="fas fa-sync-alt"></i> Refresh Stats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('refreshStats');
+    
+    function loadStats() {
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('totalEmployees').textContent = data.stats.total_employees;
+                    document.getElementById('todayCheckins').textContent = data.stats.today_checkins;
+                    document.getElementById('totalCheckins').textContent = data.stats.total_checkins;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+            });
+    }
+
+    refreshBtn.addEventListener('click', loadStats);
+    
+    // Initial load
+    loadStats();
+});
+</script>
+{% endblock %}

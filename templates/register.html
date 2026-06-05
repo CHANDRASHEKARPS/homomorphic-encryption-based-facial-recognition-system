@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}Register Employee - Homomorphic Attendance System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2 class="mb-4"><i class="fas fa-user-plus"></i> Employee Registration</h2>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Register New Employee</h5>
+            </div>
+            <div class="card-body">
+                <!-- Employee Details -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="employeeId" class="form-label">Employee ID *</label>
+                        <input type="text" class="form-control" id="employeeId" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="employeeName" class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" id="employeeName" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="department" class="form-label">Department *</label>
+                        <input type="text" class="form-control" id="department" required>
+                    </div>
+                </div>
+
+                <!-- Camera Section -->
+                <div class="mb-4">
+                    <label class="form-label">Face Capture</label>
+                    
+                    <!-- Camera Container -->
+                    <div class="camera-container text-center mb-3 p-3" 
+                         style="border: 2px solid #dee2e6; border-radius: 10px; background: #f8f9fa; min-height: 350px; display: flex; align-items: center; justify-content: center;">
+                        
+                        <!-- Video Element -->
+                        <video id="video" autoplay playsinline muted 
+                               style="max-width: 100%; max-height: 320px; border-radius: 8px; display: none;">
+                        </video>
+                        
+                        <!-- Placeholder -->
+                        <div id="cameraPlaceholder">
+                            <i class="fas fa-camera fa-4x text-muted mb-3"></i>
+                            <p class="text-muted">Camera not started</p>
+                            <p class="small text-muted">Click "Start Camera" to begin</p>
+                        </div>
+                    </div>
+
+                    <!-- Camera Controls -->
+                    <div class="text-center mb-3">
+                        <button type="button" id="startCamera" class="btn btn-primary btn-lg">
+                            <i class="fas fa-camera"></i> Start Camera
+                        </button>
+                        <button type="button" id="capturePhoto" class="btn btn-success btn-lg" style="display: none;">
+                            <i class="fas fa-camera-retro"></i> Capture Photo
+                        </button>
+                        <button type="button" id="stopCamera" class="btn btn-danger btn-lg" style="display: none;">
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                    </div>
+
+                    <!-- Status -->
+                    <div id="statusMessage" class="text-center mb-3"></div>
+
+                    <!-- Photo Counter -->
+                    <div class="text-center mb-3">
+                        <span id="photoCounter" class="badge bg-warning fs-6">0 photos captured</span>
+                        <p class="small text-muted mt-1">Capture at least 2 photos for registration</p>
+                    </div>
+
+                    <!-- Photo Previews -->
+                    <div id="photoPreviews" class="row justify-content-center"></div>
+                </div>
+
+                <!-- Register Button -->
+                <div class="text-center">
+                    <button type="button" id="registerBtn" class="btn btn-primary btn-lg" disabled>
+                        <i class="fas fa-user-plus"></i> Register Employee
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Canvas for Capture -->
+<canvas id="canvas" style="display: none;"></canvas>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Global variables
+let cameraStream = null;
+let capturedPhotos = [];
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Page loaded - initializing camera system");
+    
+    // Get all elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const startBtn = document.getElementById('startCamera');
+    const captureBtn = document.getElementById('capturePhoto');
+    const stopBtn = document.getElementById('stopCamera');
+    const registerBtn = document.getElementById('registerBtn');
+    const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+    const statusMessage = document.getElementById('statusMessage');
+    const photoPreviews = document.getElementById('photoPreviews');
+    const photoCounter = document.getElementById('photoCounter');
+
+    // Input fields
+    const employeeId = document.getElementById('employeeId');
+    const employeeName = document.getElementById('employeeName');
+    const department = document.getElementById('department');
+
+    // 1. START CAMERA - SIMPLE AND RELIABLE
+    startBtn.onclick = async function() {
+        console.log("📷 Starting camera...");
+        
+        try {
+            // Show loading
+            startBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Starting...';
+            startBtn.disabled = true;
+
+            // Request camera with basic constraints
+            cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                video: {
+                    width: 640,
+                    height: 480,
+                    facingMode: 'user'
+                }
+            });
+
+            console.log("✅ Camera access granted");
+
+            // Set video source
+            video.srcObject = cameraStream;
+
+            // Show video and hide placeholder
+            video.style.display = 'block';
+            cameraPlaceholder.style.display = 'none';
+
+            // Update buttons
+            startBtn.style.display = 'none';
+            captureBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'inline-block';
+
+            // Show status
+            showStatus('✅ Camera started! Position your face and click "Capture Photo"', 'success');
+
+            // Reset button
+            startBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera';
+            startBtn.disabled = false;
+
+        } catch (error) {
+            console.error('❌ Camera error:', error);
+            
+            let errorMsg = 'Camera Error: ';
+            if (error.name === 'NotAllowedError') {
+                errorMsg = '❌ Camera permission denied. Please allow camera access and refresh the page.';
+            } else if (error.name === 'NotFoundError') {
+                errorMsg = '❌ No camera found on this device.';
+            } else if (error.name === 'NotSupportedError') {
+                errorMsg = '❌ Camera not supported in this browser.';
+            } else {
+                errorMsg = '❌ Camera error: ' + error.message;
+            }
+            
+            showStatus(errorMsg, 'danger');
+            startBtn.innerHTML = '<i class="fas fa-camera"></i> Start Camera';
+            startBtn.disabled = false;
+        }
+    };
+
+    // 2. CAPTURE PHOTO - SIMPLE AND RELIABLE
+    captureBtn.onclick = function() {
+        console.log("📸 Capturing photo...");
+        
+        if (!cameraStream) {
+            showStatus('❌ Camera not started', 'warning');
+            return;
+        }
+
+        try {
+            // Setup canvas
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw video frame to canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to image
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // Add to photos array
+            capturedPhotos.push(imageData);
+            
+            // Update UI
+            updatePhotoPreviews();
+            updateRegisterButton();
+            
+            // Show success
+            showStatus(`✅ Photo ${capturedPhotos.length} captured successfully!`, 'success');
+            
+            console.log(`📊 Total photos: ${capturedPhotos.length}`);
+
+        } catch (error) {
+            console.error('❌ Capture error:', error);
+            showStatus('❌ Error capturing photo', 'danger');
+        }
+    };
+
+    // 3. STOP CAMERA
+    stopBtn.onclick = function() {
+        stopCamera();
+        showStatus('📷 Camera stopped', 'info');
+    };
+
+    // 4. REGISTER EMPLOYEE
+    registerBtn.onclick = async function() {
+        console.log("👤 Registering employee...");
+        
+        // Validate inputs
+        if (!employeeId.value.trim() || !employeeName.value.trim() || !department.value.trim()) {
+            showStatus('❌ Please fill all employee details', 'warning');
+            return;
+        }
+
+        if (capturedPhotos.length < 2) {
+            showStatus('❌ Please capture at least 2 photos', 'warning');
+            return;
+        }
+
+        // Show loading
+        registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Registering...';
+        registerBtn.disabled = true;
+
+        try {
+            // Prepare data
+            const formData = {
+                employee_id: employeeId.value.trim(),
+                name: employeeName.value.trim(),
+                department: department.value.trim(),
+                face_images: capturedPhotos
+            };
+
+            console.log("📤 Sending registration data...");
+
+            // Send to server
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            console.log("📨 Server response:", result);
+
+            if (result.status === 'success') {
+                showStatus(`🎉 ${result.message}`, 'success');
+                
+                // Reset form
+                resetForm();
+                
+            } else {
+                showStatus(`❌ ${result.message}`, 'danger');
+            }
+
+        } catch (error) {
+            console.error('❌ Registration error:', error);
+            showStatus('❌ Network error: ' + error.message, 'danger');
+        } finally {
+            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Employee';
+            updateRegisterButton();
+        }
+    };
+
+    // 5. UPDATE PHOTO PREVIEWS
+    function updatePhotoPreviews() {
+        photoPreviews.innerHTML = '';
+        
+        capturedPhotos.forEach((photo, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-auto mb-3';
+            col.innerHTML = `
+                <div class="card" style="width: 140px;">
+                    <img src="${photo}" class="card-img-top" alt="Photo ${index + 1}" 
+                         style="height: 100px; object-fit: cover;">
+                    <div class="card-body p-2 text-center">
+                        <small class="card-text">Photo ${index + 1}</small>
+                        <br>
+                        <button type="button" class="btn btn-danger btn-sm mt-1" 
+                                onclick="removePhoto(${index})" style="padding: 2px 8px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            photoPreviews.appendChild(col);
+        });
+
+        // Update counter
+        photoCounter.textContent = `${capturedPhotos.length} photos captured`;
+        if (capturedPhotos.length >= 2) {
+            photoCounter.className = 'badge bg-success fs-6';
+        } else {
+            photoCounter.className = 'badge bg-warning fs-6';
+        }
+    }
+
+    // 6. REMOVE PHOTO (global function)
+    window.removePhoto = function(index) {
+        capturedPhotos.splice(index, 1);
+        updatePhotoPreviews();
+        updateRegisterButton();
+        showStatus('🗑️ Photo removed', 'info');
+    };
+
+    // 7. UPDATE REGISTER BUTTON
+    function updateRegisterButton() {
+        const canRegister = capturedPhotos.length >= 2 && 
+                           employeeId.value.trim() && 
+                           employeeName.value.trim() && 
+                           department.value.trim();
+        
+        registerBtn.disabled = !canRegister;
+    }
+
+    // 8. STOP CAMERA FUNCTION
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+        
+        // Reset UI
+        video.style.display = 'none';
+        cameraPlaceholder.style.display = 'block';
+        startBtn.style.display = 'inline-block';
+        captureBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+    }
+
+    // 9. RESET FORM
+    function resetForm() {
+        // Stop camera
+        stopCamera();
+        
+        // Clear form
+        employeeId.value = '';
+        employeeName.value = '';
+        department.value = '';
+        capturedPhotos = [];
+        
+        // Update UI
+        updatePhotoPreviews();
+        updateRegisterButton();
+    }
+
+    // 10. SHOW STATUS MESSAGE
+    function showStatus(message, type) {
+        statusMessage.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            statusMessage.innerHTML = '';
+        }, 5000);
+    }
+
+    // 11. INPUT CHANGE LISTENERS
+    employeeId.addEventListener('input', updateRegisterButton);
+    employeeName.addEventListener('input', updateRegisterButton);
+    department.addEventListener('input', updateRegisterButton);
+
+    console.log("✅ Camera system initialized successfully");
+});
+
+// Emergency camera test
+window.testCamera = function() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            alert('✅ Camera test PASSED! Camera is working.');
+            stream.getTracks().forEach(track => track.stop());
+        })
+        .catch(error => {
+            alert('❌ Camera test FAILED: ' + error.message);
+        });
+};
+</script>
+
+<style>
+.camera-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.btn {
+    margin: 5px;
+    min-width: 160px;
+}
+
+.photo-preview {
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.photo-preview:hover {
+    transform: scale(1.05);
+}
+
+#video {
+    border: 3px solid #007bff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+
+<!-- Emergency Test Button -->
+<div class="text-center mt-3">
+    <button onclick="testCamera()" class="btn btn-warning">
+        <i class="fas fa-bug"></i> Emergency Camera Test
+    </button>
+</div>
+{% endblock %}
