@@ -340,7 +340,7 @@ class UltraAccurateFaceRecognizer:
 face_recognizer = UltraAccurateFaceRecognizer()
 
 # Thresholds optimized for small teams with similar-looking people
-MATCHING_THRESHOLD = 0.84  # 84% required for check-in/check-out match
+MATCHING_THRESHOLD = 0.80  # 80% required for check-in/check-out match
 REJECT_THRESHOLD   = 0.65   # below 65% → treat as NOT registered
 DUPLICATE_CHECK_THRESHOLD = 0.96  # 96% for duplicate checking (very strict - only identical faces)
 MIN_FACES_FOR_REGISTRATION = 3
@@ -1090,34 +1090,56 @@ def get_attendance():
     except Exception as e:
         print(f"❌ Error fetching attendance: {e}")
         return jsonify({'status': 'error', 'message': str(e)})
-
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     try:
-        total_employees = Employee.query.filter(Employee.status == 'active').count()
+        total_employees = Employee.query.filter(
+            Employee.status == 'active'
+        ).count()
+
         total_templates = FaceTemplate.query.count()
-        
+
+        total_checkins = AttendanceLog.query.filter(
+            AttendanceLog.checkin_type == 'IN'
+        ).count()
+
+        total_checkouts = AttendanceLog.query.filter(
+            AttendanceLog.checkin_type == 'OUT'
+        ).count()
+
         today = get_ist_date()
+
         today_checkins = AttendanceLog.query.filter(
             db.func.date(AttendanceLog.timestamp) == today,
             AttendanceLog.checkin_type == 'IN'
         ).count()
+
         today_checkouts = AttendanceLog.query.filter(
             db.func.date(AttendanceLog.timestamp) == today,
             AttendanceLog.checkin_type == 'OUT'
         ).count()
-        
+
         stats = {
             'total_employees': total_employees,
             'total_templates': total_templates,
+            'total_checkins': total_checkins,
+            'total_checkouts': total_checkouts,
             'today_checkins': today_checkins,
             'today_checkouts': today_checkouts
         }
-        
-        return jsonify({'status': 'success', 'stats': stats})
+
+        return jsonify({
+            'status': 'success',
+            'stats': stats
+        })
+
     except Exception as e:
         print(f"❌ Error fetching stats: {e}")
-        return jsonify({'status': 'error', 'message': str(e)})
+
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        })
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
