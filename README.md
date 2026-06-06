@@ -159,21 +159,54 @@ python app.py
 
 ## Screenshots
 
+## Screenshots
+
 ### Home Page
 
-(Add screenshot here)
+![Home Page](static/screenshots/homepage.png)
+
+---
 
 ### Employee Registration
 
-(Add screenshot here)
+![Registration](static/screenshots/register.png)
 
-### Attendance Dashboard
+---
 
-(Add screenshot here)
+### Attendance Check-in
+
+![Check-in](static/screenshots/checkin.png)
+
+---
+
+### Attendance Check-out
+
+![Check-out](static/screenshots/checkout.png)
+
+---
+
+### Attendance Records
+
+![Attendance](static/screenshots/attendance.png)
+
+---
+
+### Employee Management
+
+![Employees](static/screenshots/employees.png)
+
+---
 
 ### Encrypted Face Templates
 
-(Add screenshot here)
+![Encrypted Data](static/screenshots/encrypted-data.png)
+
+---
+
+### System Statistics
+
+![Statistics](static/screenshots/stats.png)
+
 
 ---
 
